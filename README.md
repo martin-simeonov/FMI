@@ -1,3 +1,3 @@
-fmi
+FMI
 ===
-FMI homeworks, and different tasks
+FMI homeworks and different tasks
