@@ -1,17 +1,19 @@
 #include "Polynom.h"
+#include <iostream>
 #include <cassert>
+#include <vector>
 
 Polynom::Polynom(unsigned int size)
-: size_(size), 
-  coefs_(new double[size])
+: size_(size),
+coefs_(new double[size])
 {
 	for (int i = 0; i < size_; ++i)
 		coefs_[i] = 0.0;
 }
 
-Polynom::Polynom(std::vector<double> coefs, unsigned int size)
-{	
-	size_ = (size == 0) ? coefs.size() : size;
+Polynom::Polynom(std::vector<double> coefs, unsigned int deg)
+{
+	size_ = (deg == 0) ? coefs.size() : (deg + 1);
 	coefs_ = new double[size_];
 
 	for (int i = 0; i < size_; ++i)
@@ -23,7 +25,7 @@ Polynom::Polynom(std::vector<double> coefs, unsigned int size)
 
 Polynom::Polynom(const Polynom& other)
 : size_(other.size_),
-  coefs_(new double[other.size_])
+coefs_(new double[other.size_])
 {
 	for (int i = 0; i < size_; ++i)
 		coefs_[i] = other.coefs_[i];
@@ -39,7 +41,7 @@ void Polynom::grow(unsigned int size)
 	Polynom temp(*this);
 
 	delete[] coefs_;
-	
+
 	size_ = size;
 	coefs_ = new double[size_];
 
@@ -94,9 +96,9 @@ void Polynom::printPolynom(std::ostream& out) const
 		{
 			if (i != getDegree())
 				out << " + ";
-			
+
 			out << coefs_[i];
-			
+
 			if (i != 0)
 				out << ".x^" << i;
 		}
@@ -162,7 +164,52 @@ Polynom& Polynom::operator*=(const Polynom& other)
 
 Polynom& Polynom::operator++()
 {
+	Polynom p(getDegree() + 2);
 
+	for (int i = getDegree(); i >= 0; --i)
+	{
+		p.coefs_[i + 1] = coefs_[i] / (i + 1);
+	}
+
+	delete[] coefs_;
+	coefs_ = new double[p.size_];
+
+	for (int i = 0; i < p.size_; ++i)
+		coefs_[i] = p.coefs_[i];
+
+	return *this;
+}
+
+Polynom Polynom::operator++(int)
+{
+	Polynom p = *this;
+	++(*this);
+	return p;
+}
+
+Polynom& Polynom::operator--()
+{
+	Polynom p(getDegree() + 1);
+
+	for (int i = getDegree(); i > 0; --i)
+	{
+		p.coefs_[i - 1] = coefs_[i] * i;
+	}
+
+	delete[] coefs_;
+	coefs_ = new double[p.size_];
+
+	for (int i = 0; i < p.size_; ++i)
+		coefs_[i] = p.coefs_[i];
+
+	return *this;
+}
+
+Polynom Polynom::operator--(int)
+{
+	Polynom p = *this;
+	--(*this);
+	return p;
 }
 
 Polynom& Polynom::operator=(const Polynom& other)
@@ -185,7 +232,7 @@ double Polynom::operator()(double x)
 	double sum = 0.0;
 	for (int i = 0; i <= getDegree(); ++i)
 	{
-		sum += coefs_[i] * (powf(x,i));
+		sum += coefs_[i] * (pow(x, i));
 	}
 	return sum;
 }

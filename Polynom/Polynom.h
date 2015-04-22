@@ -1,6 +1,3 @@
-#include <iostream>
-#include <vector>
-
 const unsigned int DEFAULT_SIZE = 10;
 
 class Polynom
@@ -26,6 +23,9 @@ public:
 	Polynom& operator*=(double);
 	Polynom& operator*=(const Polynom&);
 	Polynom& operator++();
+	Polynom operator++(int);
+	Polynom& operator--();
+	Polynom operator--(int);
 	Polynom& operator=(const Polynom&);
 	double operator()(double);
 	double& operator[](unsigned int);
